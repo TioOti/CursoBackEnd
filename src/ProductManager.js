@@ -1,15 +1,10 @@
-const fs = require ("fs");
-const { parse } = require("path");
-
+import fs from "fs";
 
 class ProductManager {
     constructor() {
         this.products = [];
-        this.path = "products.json"
+        this.path = "src/products.json"
     }
-
-    
-   
 
     addProduct(productAdded){ //Recibo un object
         const {title, description, price, thumbnail, code, stock} = productAdded 
@@ -55,7 +50,8 @@ class ProductManager {
     getProductById(productId){
         this.#readProducts()
         const productById = this.products.find(product => product.id === productId);
-        return console.log(productById || "THIS PRODUCT DOESNT EXIST");
+        console.log(productById || "THIS PRODUCT DOESNT EXIST");
+        return (productById || "THIS PRODUCT DOESNT EXIST")
     }
 
     #getMaxId() {
@@ -110,6 +106,8 @@ class ProductManager {
 
 }
 
+export default ProductManager;
+
 
 const testProduct1 = {
     title: "Producto prueba", 
@@ -148,7 +146,9 @@ const testProduct4 = {
 
 
 const productManager = new ProductManager();
-productManager.getProducts();
+
+
+/* productManager.getProducts();
 productManager.addProduct(testProduct1);
 productManager.addProduct(testProduct2);
 productManager.addProduct(testProduct3);
@@ -160,8 +160,5 @@ productManager.updateProducts(2, testProduct3 )
 productManager.deleteProduct(4)
 productManager.getProducts()
 
-
-
-
-
+*/
 
