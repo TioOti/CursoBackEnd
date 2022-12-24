@@ -8,8 +8,7 @@ class CartManager{
         this.path = './src/Cart/Carts.json'
         
     }
-
-
+    
     createCart(productsInput){
 
         const {products} = productsInput
@@ -41,6 +40,11 @@ class CartManager{
         return result  !== CART_NOT_EXIST?
         {status: 200, detail:{products: result.products}} :
         {status: 404, detail:{ message: CART_NOT_EXIST }}
+    }
+
+    getCartsContent(){
+        this.#readCarts();
+        return this.carts;
     }
 
     addProductToCart(cartId, productId){

@@ -1,15 +1,21 @@
 {
   "name": "primera_entrega_pf",
   "version": "1.0.0",
-  "description": "",
   "main": "ProductManager.js",
   "type": "module",
-
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --verbose --ignore products.json --ignore Carts.json --inspect ./src/app.js"
   },
   "author": "Ripoll Octavio",
-  "license": "ISC"
-  
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TioOti/CursoBackEnd.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TioOti/CursoBackEnd/issues"
+  },
+  "homepage": "https://github.com/TioOti/CursoBackEnd#readme",
+  "description": ""
 }

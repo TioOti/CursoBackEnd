@@ -13,6 +13,23 @@ cartsRouter.post("/", (req, res) => {
 
 });
 
+
+cartsRouter.get('/', (req, res,)=>{
+    try {
+        const cartList = cartManager.getCartsContent() 
+        res.status(200).json(cartList)
+    } catch (error) {
+        res.status(501).json({ error: error.message })
+    }
+})
+
+/* cartsRouter.get("/", (req, res) =>{
+    const {products} = req;
+    const response = cartManager.readCarts();
+    res.status(response.status).json(response.detail)
+})
+ */
+
 cartsRouter.get("/:cid", (req, res) =>{
     const {cid} = req.params;
     const response = cartManager.getCart(Number(cid));
@@ -24,6 +41,7 @@ cartsRouter.post("/:cid/product/:pid", (req, res) =>{
     const response = cartManager.addProductToCart(Number(cid), Number(pid));
     res.status(response.status).json(response.detail);
 })
+
 
 
 
