@@ -44,7 +44,7 @@ class CartManager{
 
     getCartsContent(){
         this.#readCarts();
-        return this.carts;
+        return  { status: 200, detail:this.carts };
     }
 
     addProductToCart(cartId, productId){

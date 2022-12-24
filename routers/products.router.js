@@ -1,10 +1,7 @@
-import ProductManager from "../ProductManager.js";
+import productManager from "../ProductManager.js"
 import { Router } from "express";
 
 const productsRouter = Router()
-
-let productManager = new ProductManager();
-
 
 productsRouter.get("/", (req, res) => {
     const { limit } = req.query;
@@ -24,7 +21,11 @@ productsRouter.get("/:pid", (req, res) => {
 
 productsRouter.post('/', (req,res) =>{
     const productAdded = req.body;
-    const response = productManager.addProduct(productAdded)
+    const response = productManager.addProduct(productAdded);
+    if(response.status == 201){
+        const productsList = productManager.getProducts();
+        req.io.emit('updateProducts', productsList);
+    }
     res.status(response.status).json(response.detail)
 
 })
@@ -39,6 +40,10 @@ productsRouter.put('/:pid', (req,res) =>{
 productsRouter.delete('/:pid', (req,res) =>{
     const { pid } = req.params;
     const response = productManager.deleteProduct(Number(pid))
+    if(response.status == 200){
+        const productsList = productManager.getProducts();
+        req.io.emit('updateProducts', productsList);
+    }
     res.status(response.status).json(response.detail)
 
 })

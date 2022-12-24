@@ -111,21 +111,5 @@ class ProductManager {
 
 }
 
-export default ProductManager;
-
-
-
-/* productManager.getProducts();
-productManager.addProduct(testProduct1);
-productManager.addProduct(testProduct2);
-productManager.addProduct(testProduct3);
-productManager.addProduct(testProduct4);
-productManager.getProducts();
-productManager.getProductById(1);
-productManager.getProductById(5);
-productManager.updateProducts(2, testProduct3 )
-productManager.deleteProduct(4)
-productManager.getProducts()
-
-*/
+export default new ProductManager();
 
