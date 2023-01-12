@@ -9,7 +9,7 @@ viewsRouter.get('/', (req, res)=>{
 })
 
 viewsRouter.get('/realtimeproducts', (req, res)=>{
-    let products = ProductManager
+    let products = ProductManager.getProducts()
     res.render('realTimeProducts', { products });
 })
 

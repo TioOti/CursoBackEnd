@@ -7,8 +7,7 @@ socket.on('updateProducts', products =>{
 
 let updateProductList = (products) => {
     let container = document.getElementById("productsContainer");
-    container.innerHTML= "<div> Cargando ...</div>";
-    console.log("innerHTML Clean")
+    container.innerHTML= "";
     products.forEach(product => {
         let card = document.createElement("div");
         card.style = "width: 18rem;";
