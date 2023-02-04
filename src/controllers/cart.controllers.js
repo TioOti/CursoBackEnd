@@ -15,12 +15,7 @@ export async function getCarts(req, res){
                 carts: response,
                 status: STATUS.SUCCESS
             })
-        }
-         
-        res.json({
-            products: response,
-            status: STATUS.SUCCESS
-        });
+        };
     } catch (error) {
         res.status(500).json({
             error: error.message,

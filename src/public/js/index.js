@@ -1,10 +1,3 @@
-const socket = io();
-
-socket.on('updateProducts', products =>{
-    console.log(products);
-    updateProductList(products);
-})
-
 let updateProductList = (products) => {
     let container = document.getElementById("productsContainer");
     container.innerHTML= "";
