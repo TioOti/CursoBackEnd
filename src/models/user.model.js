@@ -15,6 +15,10 @@ const schema = new Schema(
       required: true,
       unique: true,
     },
+    githubUser: {
+      type: Boolean, 
+      default: false 
+    }, 
     age: {
       type: Number,
       min: 0,
@@ -24,12 +28,11 @@ const schema = new Schema(
       type: String,
       required: true,
       minLength: 6,
-      maxLength: 20,
     },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 export const UserModel = model("Users", schema);

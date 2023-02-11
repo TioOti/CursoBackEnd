@@ -13,6 +13,7 @@ import cartsRouter from './routers/carts.router.js';
 import "./config/db.js"
 import UserRouter from "./routers/user.router.js"
 import AuthRouter from "./routers/auth.router.js";
+import GithubRouter from './routers/github.router.js';
 
 dotenv.config();
 const app = express();
@@ -48,4 +49,6 @@ app.use("/api/carts", cartsRouter);
 app.use("/views", viewsRouter);
 app.use("/api/users", UserRouter);
 app.use("/api/auth", AuthRouter);
+
+app.use("/api/github", GithubRouter)
 
