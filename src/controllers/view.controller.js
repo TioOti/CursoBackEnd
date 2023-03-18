@@ -1,8 +1,8 @@
-import * as ProductService from '../services/product.service.js';
-import * as AuthService from '../services/auth.service.js'
-import * as UserService from "../services/user.service.js";
+import * as ProductService from '../services/productDAOs/product.service.js';
+import * as AuthService from '../services/auth/auth.service.js'
+import * as UserService from "../services/userDAOs/user.service.js";
 import * as Constants from "../constants/constants.js";
-import * as CartService from '../services/cart.service.js';
+import * as CartService from '../services/cartDAOs/cart.service.js';
 
 export async function renderHome(req, res){
     try {
@@ -33,6 +33,7 @@ export async function login(req, res) {
         if(email && password ){
         const authenticated = await AuthService.login(email, password);
         if (authenticated) {
+            req.headers("Authorization", "Bearer "+token)
             req.session.authenticated = true;
             req.session.userEmail = email;
             res.redirect(Constants.PRODUCTS);

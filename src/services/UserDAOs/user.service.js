@@ -1,11 +1,11 @@
-import { UserModel } from "../models/user.model.js";
-import { EMAIL_ALREADY_IN_USE } from '../constants/constants.js';
+import { UserModel } from "../../models/user.model.js";
+import { EMAIL_ALREADY_IN_USE } from '../../constants/constants.js';
 import bcrypt from 'bcrypt'
 
-export async function createUser(data) {
+export async function createUser(data){
   try {
-    const userExist = await getUser(data.email);
-    if (userExist) {
+    const userRegistered = await getUser(data.email);
+    if(userRegistered){
       throw new Error(EMAIL_ALREADY_IN_USE);
     } else {
       data.password = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10));
@@ -25,4 +25,3 @@ export async function getUser(email) {
     throw new Error(error.message);
   }
 }
-

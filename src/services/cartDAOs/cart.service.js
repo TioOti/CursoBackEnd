@@ -1,4 +1,4 @@
-import { CartModel } from './../models/cart.model.js';
+import { CartModel } from '../../models/cart.model.js';
 
 export async function getCarts(){
     try {
@@ -35,7 +35,7 @@ export async function addProductToCart(cartId, productId){
             if (productToUpdate){
                 productToUpdate.quantity = productToUpdate.quantity + 1;
             } else{
-                cart.products.push({product: productId});
+                cart._doc.products.push({product: productId});
             }
             await CartModel.findByIdAndUpdate(cartId, cart, { new: true });
         }
@@ -52,10 +52,10 @@ export async function updateProductQty(cartId, productId, quantity){
             const productToUpdate = cart.products.find(product => product.product == productId);
             if (productToUpdate){
                 productToUpdate.quantity = quantity;
-                await CartModel.findByIdAndUpdate(cartId, cart, { new: true });
             } else{
-                cart.products.push({product: productId, quantity: quantity})
+                cart.products.push({product: productId, quantity: quantity});
             }
+            await CartModel.findByIdAndUpdate(cartId, cart, { new: true });
         }
         return cart;
     } catch (error) {
@@ -67,7 +67,7 @@ export async function updateCart(cartId, data){
     try {
         const cart = await CartModel.findById(cartId);
         if(cart){
-            cart.products = data.products;
+            cart._doc.products = data.products;
             await CartModel.findByIdAndUpdate(cartId, cart, { new: true });
         }
         return cart;
@@ -80,7 +80,7 @@ export async function deleteProduct(cartId, productId){
     try {
         const cart = await CartModel.findById(cartId);
         if (cart) {
-            cart.products = cart.products.filter(product => product.product != productId);
+            cart._doc.products = cart.products.filter(cartItem => cartItem.product != productId.toString());
             await CartModel.findByIdAndUpdate(cartId, cart, { new: true });
         }
         return cart;
@@ -93,7 +93,7 @@ export async function deleteProducts(cartId){
     try {
         const cart = await CartModel.findById(cartId);
         if(cart){
-            cart.products = [];
+            cart._doc.products = [];
             await CartModel.findByIdAndUpdate(cartId, cart, { new: true });
         }
         return cart;

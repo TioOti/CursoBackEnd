@@ -1,40 +1,19 @@
 import express from 'express';
-import dotenv from "dotenv";
-dotenv.config();
-if (process.env.MONGO_URI) import("./config/db.js");
-import cookie from 'cookie-parser'
-import session from "express-session";
-import mongoStore from "connect-mongo";
+import config from './config/config.js';
+import passport from 'passport';
 import __dirname from './utils.js';
 import handlebars from 'express-handlebars';
 import viewsRouter from './routers/views.router.js';
-import productsRouter from './routers/products.router.js'
-import cartsRouter from './routers/carts.router.js';
-import "./config/db.js"
+import ProductsRouter from './routers/products.router.js'
+import CartsRouter from './routers/carts.router.js';
 import UserRouter from "./routers/user.router.js"
 import AuthRouter from "./routers/auth.router.js";
 import GithubRouter from './routers/github.router.js';
+import SessionRouter from './routers/sessions.route.js'
 
-dotenv.config();
 const app = express();
-const PORT = process.env.PORT
+const PORT = config.port || 3000;
 const server = app.listen(PORT, () => console.log(`🚀 Server started on port http://localhost:${PORT}`))
-
-app.use(
-    session({
-      store: new mongoStore({
-        mongoUrl: process.env.MONGO_URI,
-        options: {
-          userNewUrlParser: true,
-          useUnifiedTopology: true,
-        },
-      }),
-      secret: process.env.SECRET,
-      resave: false,
-      saveUninitialized: false,
-      cookie: { maxAge: 1000000 },
-    }),
-  );
 
 app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname+'/views');
@@ -44,11 +23,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.on("error", (error) => console.error(error))
 server.on('error', (err) => console.log(err));
-app.use("/api/products", productsRouter);
-app.use("/api/carts", cartsRouter);
+
+app.use("/api/products", ProductsRouter);
+app.use("/api/carts", CartsRouter);
 app.use("/views", viewsRouter);
 app.use("/api/users", UserRouter);
+app.use("/api/sessions", SessionRouter)
 app.use("/api/auth", AuthRouter);
-
 app.use("/api/github", GithubRouter)
+
 

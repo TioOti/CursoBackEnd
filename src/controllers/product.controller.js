@@ -1,6 +1,5 @@
-import * as ProductService from '../services/product.service.js'
-import { STATUS } from '../constants/constants.js';
-
+import factory from '../services/factory.js';
+import * as Constants from '../constants/constants.js';
 
 export async function getProducts(req,res){
     try {
@@ -22,64 +21,61 @@ export async function getProducts(req,res){
                 status: req.query.status
             }
         };
-
-        const response = await ProductService.getProducts(query, options);
-        if (response.docs.length == 0){
+        const products = await factory.product.getProducts(query, options);
+        if (!products || products.productList.length == 0){
             res.status(404).json({
-                message: "Products were not found.",
-                status: STATUS.FAILED
+                message: Constants.PRODUCTS_NOT_FOUND,
+                status: Constants.STATUS.FAILED
             });
         } else {
             res.json({
-                products: response,
-                status: STATUS.SUCCESS
+                products,
+                status: Constants.STATUS.SUCCESS
             })
         }
-
     } catch (error) {
         res.status(500).json({
             error: error.message,
-            status: STATUS.FAILED
+            status: Constants.STATUS.FAILED
         });
     }
 }
-
 
 export async function getProduct(req, res){
     try {
         const { pid } = req.params;
-        const response = await ProductService.getProduct(pid);
-        if (response.length == 0){
+        const product = await factory.product.getProduct(pid);
+        if (!product){
             res.status(404).json({
-                message: "Product was not found.",
-                status: STATUS.FAILED
+                message: Constants.PRODUCT_NOT_FOUND,
+                status: Constants.STATUS.FAILED
+            });
+        } else {
+            res.json({
+                product,
+                status: Constants.STATUS.SUCCESS
             });
         }
-        res.json({
-            product: response,
-            status: STATUS.SUCCESS
-        })
     } catch (error) {
         res.status(400).json({
             error: error.message,
-            status: STATUS.FAILED
+            status: Constants.STATUS.FAILED
         });
     }
 }
- 
 
 export async function addProduct(req, res){
     try {
         const { body } = req;
-        const response = await ProductService.addProduct(body);
+        const product = await factory.product.addProduct(body);
         res.status(201).json({
-            product: response,
-            status: STATUS.SUCCESS
+            product,
+            status: Constants.STATUS.SUCCESS
         });
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             error: error.message,
-            status: STATUS.FAILED
+            status: Constants.STATUS.FAILED
         });
     }
 }
@@ -88,22 +84,22 @@ export async function updateProduct(req, res){
     try {
         const { pid } = req.params;
         const { body } = req;
-        const response = await ProductService.updateProduct(pid, body);
-        if (!response){
+        const product = await factory.product.updateProduct(pid, body);
+        if (!product){
             res.status(404).json({
-                product: "Product to update was not found",
-                status: STATUS.FAILED
+                product: Constants.PRODUCT_NOT_FOUND,
+                status: Constants.STATUS.FAILED
             });
         } else {
             res.json({
-                product: response,
-                status: STATUS.SUCCESS
+                product,
+                status: Constants.STATUS.SUCCESS
             });
         }
     } catch (error) {
         res.status(400).json({
             error: error.message,
-            status: STATUS.FAILED
+            status: Constants.STATUS.FAILED
         });
     }
 }
@@ -111,22 +107,24 @@ export async function updateProduct(req, res){
 export async function deleteProduct(req, res){
     try {
         const { pid } = req.params;
-        const response = await ProductService.deleteProduct(pid);
-        if (response.matchedCount == 0){
+        const product = await factory.product.getProduct(pid);
+        if (!product || product.deleted){
             res.status(404).json({
-                product: "Product to delete was not found",
-                status: STATUS.FAILED
+                message: PRODUCT_NOT_FOUND_OR_DELETED,
+                status: Constants.STATUS.FAILED
             });
         } else {
+            await factory.product.deleteProduct(pid)
             res.json({
-                message: "Product has been successfully deleted.",
-                status: STATUS.SUCCESS
+                message: Constants.PRODUCT_DELETE_SUCCESS,
+                status: Constants.STATUS.SUCCESS
             });
         }
     } catch (error) {
         res.status(400).json({
             error: error.message,
-            status: STATUS.FAILED
+            status: Constants.STATUS.FAILED
         });
     }
 }
+

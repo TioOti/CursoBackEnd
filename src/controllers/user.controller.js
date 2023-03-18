@@ -1,47 +1,43 @@
-import { STATUS } from "../constants/constants.js";
-import * as UserService from "../services/user.service.js";
+import * as Constants from './../constants/constants.js';
+import factory from '../services/factory.js'
 
 export async function createUser(req, res) {
   try {
     const data = req.body;
-    const response = await UserService.createUser(data);
+    const user = await factory.user.createUser(data);
+    delete user.password;
     res.status(201).json({
-      user: response,
-      status: STATUS.SUCCESS,
+      user,
+      status: Constants.STATUS.SUCCESS,
     });
   } catch (error) {
     res.status(400).json({
       error: error.message,
-      status: STATUS.FAILED,
+      status: Constants.STATUS.FAILED,
     });
-  }
-}
-
-export async function createUserFromForm (req, res) {
-  try {
-    const data = req.body;
-    const user = await UserService.createUser(data);
-    req.session.authenticated = true;
-    req.session.userEmail = user.email;
-    res.redirect("products");
-  } catch (error) {
-    res.render("registration"), { error: error.message };
   }
 }
 
 export async function getUser(req, res) {
   try {
     const { email } = req.params;
-    const user = await UserService.getUser(email);
-    if (user) {
+    const user = await factory.user.getUser(email);
+    if (!user) {
+      res.status(404).json({
+        error: Constants.USER_NOT_FOUND,
+        status: Constants.STATUS.FAILED,
+      });
+    } else {
       delete user.password;
-      res.json({ user });
+      res.json({
+        user,
+        status: Constants.STATUS.SUCCESS
+      });
     }
   } catch (error) {
     res.status(400).json({
       error: error.message,
-      status: STATUS.FAILED,
+      status: Constants.STATUS.FAILED,
     });
   }
 }
-
