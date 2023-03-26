@@ -1,5 +1,7 @@
 import * as Constants from './../constants/constants.js';
 import factory from '../services/factory.js'
+import CustomError from '../utils/customError.js';
+import { ERRORS } from '../constants/errors.js';
 
 export async function createUser(req, res) {
   try {
@@ -11,22 +13,16 @@ export async function createUser(req, res) {
       status: Constants.STATUS.SUCCESS,
     });
   } catch (error) {
-    res.status(400).json({
-      error: error.message,
-      status: Constants.STATUS.FAILED,
-    });
+    next(CustomError.createError(ERRORS.UNHANDLED_ERROR, data.email));
   }
 }
 
 export async function getUser(req, res) {
+  const { email } = req.params;
   try {
-    const { email } = req.params;
     const user = await factory.user.getUser(email);
     if (!user) {
-      res.status(404).json({
-        error: Constants.USER_NOT_FOUND,
-        status: Constants.STATUS.FAILED,
-      });
+      throw CustomError.createError(ERRORS.USER_NOT_FOUND); 
     } else {
       delete user.password;
       res.json({
@@ -35,9 +31,6 @@ export async function getUser(req, res) {
       });
     }
   } catch (error) {
-    res.status(400).json({
-      error: error.message,
-      status: Constants.STATUS.FAILED,
-    });
+    if(!error.code) next(CustomError.createError(ERRORS.UNHANDLED_ERROR, email)); else next(error);
   }
 }

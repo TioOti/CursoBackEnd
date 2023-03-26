@@ -1,18 +1,13 @@
 import * as CartController from '../controllers/cart.controllers.js'
 import { userRole } from '../middleware/roles.middleware.js';
 import passport from '../utils/passport.util.js';
-import { STATUS, MISSING_INVALID_TOKEN } from '../constants/constants.js';
+import CustomError from '../utils/customError.js';
+import { ERRORS } from '../constants/errors.js';
 import { Router } from "express";
 
 const cartsRouter = Router();
 
-cartsRouter.get("/unauthenticated", (req, res) => {
-    res.status(401).json({
-        message: MISSING_INVALID_TOKEN,
-        status: STATUS.FAILED
-    });
-});
-
+cartsRouter.get("/unauthenticated", () => { throw CustomError.createError(ERRORS.MISSING_INVALID_TOKEN) });
 cartsRouter.get("/", CartController.getCarts);
 cartsRouter.get("/:cid", CartController.getCart);
 cartsRouter.post("/", CartController.createCart);
@@ -26,4 +21,3 @@ cartsRouter.get("/:cid/purchase", passport.authenticate('current', { session: fa
                                             userRole, CartController.purchase);
 
 export default cartsRouter;
-

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --verbose --ignore products.json --ignore Carts.json --inspect ./src/app.js"
+    "dev": "nodemon --verbose --inspect ./src/app.js"
   },
   "author": "Ripoll Octavio",
   "license": "ISC",
@@ -19,6 +19,7 @@
   "homepage": "https://github.com/TioOti/CursoBackEnd#readme",
   "description": "",
   "dependencies": {
+    "@faker-js/faker": "^7.6.0",
     "bcrypt": "^5.1.0",
     "commander": "^10.0.0",
     "connect-mongo": "^4.6.0",

@@ -1,14 +1,13 @@
 import factory from '../services/factory.js';
+import CustomError from '../utils/customError.js';
+import { ERRORS } from '../constants/errors.js';
 import * as Constants from '../constants/constants.js'
 
-export async function getCarts(req, res){
+export async function getCarts(req, res, next){
     try {
         const carts = await factory.cart.getCarts();
         if(!carts || carts.length == 0){
-            res.status(404).json({
-                message: Constants.CARTS_NOT_FOUND,
-                status: Constants.STATUS.FAILED
-            });
+            throw CustomError.createError(ERRORS.CARTS_NOT_FOUND, req.user?.email);
         } else{
             res.json({
                 carts,
@@ -16,10 +15,7 @@ export async function getCarts(req, res){
             })
         };
     } catch (error) {
-        res.status(500).json({
-            error: error.message,
-            status: Constants.STATUS.FAILED
-        })
+        if(!error.code) next(CustomError.createError(ERRORS.UNHANDLED_ERROR, req.user?.email)); else next(error);
     }
 }
 
@@ -28,21 +24,15 @@ export async function getCart(req, res){
         const { cid } = req.params;
         const cart = await factory.cart.getCart(cid);
         if (!cart){
-            res.status(404).json({
-                message: Constants.CART_NOT_FOUND,
-                status: Constants.STATUS.FAILED
-            });
+            throw CustomError.createError(ERRORS.CART_NOT_FOUND, req.user?.email);
         }else{
             res.json({
                 cart,
                 status: Constants.STATUS.SUCCESS
             }); 
         }
-    } catch (error){
-        res.status(400).json({
-            error: error.message,
-            status: Constants.STATUS.FAILED
-        });
+    }  catch (error) {
+        if(!error.code) next(CustomError.createError(ERRORS.UNHANDLED_ERROR, req.user?.email)); else next(error);
     }
 }
 
@@ -55,10 +45,7 @@ export async function createCart(req, res){
             status: Constants.STATUS.SUCCESS
         });
     } catch (error) {
-        res.status(400).json({
-            error: error.message,
-            status: Constants.STATUS.FAILED
-        });
+        next(CustomError.createError(ERRORS.UNHANDLED_ERROR, req.user?.email));
     }
 }
 
@@ -67,10 +54,7 @@ export async function addProductToCart(req, res){
         const { cid, pid } = req.params;
         const cart = await factory.cart.addProductToCart(cid, pid);
         if (!cart){
-            res.status(404).json({
-                message: Constants.CART_NOT_FOUND,
-                status: Constants.STATUS.FAILED
-            });
+            throw CustomError.createError(ERRORS.CART_NOT_FOUND, req.user?.email);
         } else {
             res.json({
                 cart,
@@ -78,10 +62,7 @@ export async function addProductToCart(req, res){
             });
         }
     } catch (error) {
-        res.status(400).json({
-            error: error.message,
-            status: Constants.STATUS.FAILED
-        });
+        if(!error.code) next(CustomError.createError(ERRORS.UNHANDLED_ERROR, req.user?.email)); else next(error);
     }
 }
 
@@ -91,10 +72,7 @@ export async function updateProductQty(req, res){
         const { body } = req;
         const cart = await factory.cart.updateProductQty(cid, pid, body.quantity);
         if (!cart){
-            res.status(404).json({
-                message: Constants.CART_NOT_FOUND,
-                status: Constants.STATUS.FAILED
-            });
+            throw CustomError.createError(ERRORS.CART_NOT_FOUND, req.user?.email);
         } else {
             res.json({
                 cart,
@@ -102,10 +80,7 @@ export async function updateProductQty(req, res){
             });
         }
     } catch (error) {
-        res.status(400).json({
-            error: error.message,
-            status: Constants.STATUS.FAILED
-        });
+        if(!error.code) next(CustomError.createError(ERRORS.UNHANDLED_ERROR, req.user?.email)); else next(error);
     }
 }
 
@@ -113,23 +88,17 @@ export async function updateCart(req, res){
     try {
         const { cid } = req.params;
         const { body } = req;
-        const response = await factory.cart.updateCart(cid, body);
-        if (!response){
-            res.status(404).json({
-                message: Constants.CART_NOT_FOUND,
-                status: STATUS.FAILED
-            });
+        const cart = await factory.cart.updateCart(cid, body);
+        if (!cart){
+            throw CustomError.createError(ERRORS.CART_NOT_FOUND, req.user?.email);
         } else {
             res.json({
-                cart: response,
+                cart,
                 status: Constants.STATUS.SUCCESS
             });
         }
     } catch (error) {
-        res.status(400).json({
-            error: error.message,
-            status: Constants.STATUS.FAILED
-        });
+        if(!error.code) next(CustomError.createError(ERRORS.UNHANDLED_ERROR, req.user?.email)); else next(error);
     }
 }
 
@@ -138,10 +107,7 @@ export async function deleteProduct(req, res){
         const { cid, pid } = req.params;
         const cart = await factory.cart.deleteProduct(cid, pid);
         if (!cart){
-            res.status(404).json({
-                message: Constants.CART_NOT_FOUND,
-                status: STATUS.FAILED
-            });
+            throw CustomError.createError(ERRORS.CART_NOT_FOUND, req.user?.email);
         } else {
             res.json({
                 cart,
@@ -149,10 +115,7 @@ export async function deleteProduct(req, res){
             });
         }cart
     } catch (error) {
-        res.status(400).json({
-            error: error.message,
-            status: Constants.STATUS.FAILED
-        });
+        if(!error.code) next(CustomError.createError(ERRORS.UNHANDLED_ERROR, req.user?.email)); else next(error);
     }
 }
 
@@ -161,10 +124,7 @@ export async function deleteProducts(req, res){
         const { cid } = req.params;
         const cart = await factory.cart.deleteProducts(cid);
         if (!cart){
-            res.status(404).json({
-                message: Constants.CART_NOT_FOUND,
-                status: Constants.STATUS.FAILED
-            });
+            throw CustomError.createError(ERRORS.CART_NOT_FOUND, req.user?.email);
         } else {
             res.json({
                 cart,
@@ -172,10 +132,7 @@ export async function deleteProducts(req, res){
             });
         }
     } catch (error) {
-        res.status(400).json({
-            error: error.message,
-            status: Constants.STATUS.FAILED
-        });
+        if(!error.code) next(CustomError.createError(ERRORS.UNHANDLED_ERROR, req.user?.email)); else next(error);
     }
 }
 
@@ -184,10 +141,7 @@ export async function purchase(req, res){
         const { cid } = req.params;
         const cart = await factory.cart.getCart(cid);
         if (!cart){
-            res.status(404).json({
-                message: Constants.CART_NOT_FOUND,
-                status: Constants.STATUS.FAILED
-            });
+            throw CustomError.createError(ERRORS.CART_NOT_FOUND, req.user?.email);
         } else {
             let amount = 0;
             let unprocessedProducts = [];
@@ -208,9 +162,6 @@ export async function purchase(req, res){
             });
         }
     } catch (error) {
-        res.status(500).json({
-            error: error.message,
-            status: Constants.STATUS.FAILED
-        });
+        if(!error.code) next(CustomError.createError(ERRORS.UNHANDLED_ERROR, req.user?.email)); else next(error);
     }
 }
