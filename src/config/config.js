@@ -10,6 +10,7 @@ export default {
     port: process.env.PORT || 3000,
     mongoURI: process.env.MONGO_URI,
     persistence : program.opts().persistence || process.env.PERSISTENCE || "MONGO",
+    node_env: process.env.NODE_ENV || 'dev',
     secret: process.env.SECRET,
     githubClientId: process.env.CLIENT_ID,
     githubClientSecret: process.env.CLIENT_SECRET,

@@ -3,7 +3,7 @@ import factory from '../services/factory.js'
 import CustomError from '../utils/customError.js';
 import { ERRORS } from '../constants/errors.js';
 
-export async function createUser(req, res) {
+export async function createUser(req, res, next) {
   try {
     const data = req.body;
     const user = await factory.user.createUser(data);
@@ -13,8 +13,7 @@ export async function createUser(req, res) {
       status: Constants.STATUS.SUCCESS,
     });
   } catch (error) {
-    next(CustomError.createError(ERRORS.UNHANDLED_ERROR, data.email));
-  }
+    next(CustomError.createError(ERRORS.UNHANDLED_ERROR, error.message, data.email));}
 }
 
 export async function getUser(req, res) {
@@ -22,7 +21,7 @@ export async function getUser(req, res) {
   try {
     const user = await factory.user.getUser(email);
     if (!user) {
-      throw CustomError.createError(ERRORS.USER_NOT_FOUND); 
+      throw CustomError.createError(ERRORS.USER_NOT_FOUND, null, email); 
     } else {
       delete user.password;
       res.json({
@@ -31,6 +30,6 @@ export async function getUser(req, res) {
       });
     }
   } catch (error) {
-    if(!error.code) next(CustomError.createError(ERRORS.UNHANDLED_ERROR, email)); else next(error);
+    if(!error.code) next(CustomError.createError(ERRORS.UNHANDLED_ERROR, error.message, email)); else next(error);
   }
 }

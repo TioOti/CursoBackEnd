@@ -12,6 +12,7 @@ import GithubRouter from './routers/github.router.js';
 import SessionRouter from './routers/sessions.route.js'
 import MocksRouter from './routers/mocks.router.js'
 import errorHandler from './middleware/errorHandler.middleware.js'
+import loggerTestRouter from './routers/loggerTest.router.js';
 
 const app = express();
 const PORT = config.port || 3000;
@@ -33,6 +34,7 @@ app.use("/views", viewsRouter);
 app.use("/api/mock", MocksRouter);
 app.use("/api/users", UserRouter);
 app.use("/api/sessions", SessionRouter)
+app.use("/api/test", loggerTestRouter);
 app.use("/api/auth", AuthRouter);
 app.use("/api/github", GithubRouter)
 app.use(errorHandler);
