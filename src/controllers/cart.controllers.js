@@ -126,10 +126,7 @@ export async function deleteProducts(req, res){
         if (!cart){
             throw CustomError.createError(ERRORS.CART_NOT_FOUND, null, req.user?.email);
         } else {
-            res.json({
-                cart,
-                status: Constants.STATUS.SUCCESS
-            });
+            res.status(204).send();
         }
     } catch (error) {
         handleErrors(error, req, next);

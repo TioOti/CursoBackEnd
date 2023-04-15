@@ -2,6 +2,7 @@ import * as ProductController from '../controllers/product.controller.js'
 import { adminRole } from '../middleware/roles.middleware.js'
 import passport from 'passport';
 import CustomError from '../utils/customError.js';
+import { PRODUCTS_UNAUTHENTICATED } from '../constants/constants.js';
 import { ERRORS } from '../constants/errors.js';
 import { Router }  from "express";
 

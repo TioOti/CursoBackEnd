@@ -13,10 +13,33 @@ import SessionRouter from './routers/sessions.route.js'
 import MocksRouter from './routers/mocks.router.js'
 import errorHandler from './middleware/errorHandler.middleware.js'
 import loggerTestRouter from './routers/loggerTest.router.js';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUiExpress from 'swagger-ui-express';
+import { SwaggerTheme } from 'swagger-themes';
 
 const app = express();
 const PORT = config.port || 3000;
 const server = app.listen(PORT, () => console.log(`🚀 Server started on port http://localhost:${PORT}`))
+
+const darkStyle = new SwaggerTheme('v3').getBuffer('dark');
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: "eCommerce Coderhouse",
+            description: "Documentation for eCommerce APIs",
+            version: "1.0.0"
+        },
+        servers: [
+            { url: "http://localhost:3000" }
+        ]
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`]
+};
+
+const specs = swaggerJSDoc(swaggerOptions);
+app.use('/dark/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs, { customCss: darkStyle }));
+app.use('/apidocs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
 
 app.engine('handlebars', handlebars.engine());
 app.set('views', __dirname+'/views');

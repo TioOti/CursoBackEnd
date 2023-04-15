@@ -95,10 +95,7 @@ export async function deleteProduct(req, res, next){
             throw CustomError.createError(ERRORS.PRODUCT_NOT_FOUND_OR_DELETED, null, req.user?.email);
         } else {
             await factory.product.deleteProduct(pid)
-            res.json({
-                message: Constants.PRODUCT_DELETE_SUCCESS,
-                status: Constants.STATUS.SUCCESS
-            });
+            res.status(204).send();
         }
     } catch (error) {
         handleErrors(error, req, next);

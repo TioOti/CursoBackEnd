@@ -10,7 +10,10 @@ export const GITHUB_LOGIN_FAIL_URI = "fail";
 export const LOGIN_VIEW = "/views/login";
 export const REGISTRATION = "registration";
 export const PRODUCTS_VIEW = "/views/products";
+export const PASSWORD_RECOVERY = "passwordRecovery";
 export const PRODUCTS = "products";
+export const PRODUCTS_UNAUTHENTICATED = "/api/products/unauthenticated";
+export const CARTS_UNAUTHENTICATED = "/api/carts/unauthenticated";
 export const CART = "cart";
 export const USER = "user";
 export const ADMIN = "admin";
@@ -18,3 +21,4 @@ export const LOGIN_SUCCESS = "User was successfully authenticated";
 export const LOGOUT_SUCCESS = "You successfully logged out.";
 export const PRODUCT_DELETE_SUCCESS = "Product has been successfully deleted.";
 export const VALID_TOKEN = "Authorized Token.";
+

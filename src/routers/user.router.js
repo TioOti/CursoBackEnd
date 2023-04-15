@@ -5,6 +5,7 @@ import { apiAuth } from '../middleware/authToken.middleware.js'
 const router = new Router();
 
 router.post("/", UserController.createUser);
-router.get("/:email", apiAuth, UserController.getUser);
+router.put("/:email", apiAuth, UserController.updateUser);
+router.put("/password/:email", apiAuth, UserController.updatePassword);
 
 export default router;
