@@ -6,6 +6,7 @@ import handlebars from 'express-handlebars';
 import viewsRouter from './routers/views.router.js';
 import ProductsRouter from './routers/products.router.js'
 import CartsRouter from './routers/carts.router.js';
+import PaymentsRouter from './routers/payments.router.js';
 import UserRouter from "./routers/user.router.js"
 import AuthRouter from "./routers/auth.router.js";
 import GithubRouter from './routers/github.router.js';

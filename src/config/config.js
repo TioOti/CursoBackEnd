@@ -14,7 +14,8 @@ export default {
     secret: process.env.SECRET,
     githubClientId: process.env.CLIENT_ID,
     githubClientSecret: process.env.CLIENT_SECRET,
-    githubCallbackUrl: process.env.CALLBACK_URL
+    githubCallbackUrl: process.env.CALLBACK_URL,
+    stripeSecret: process.env.STRIPE_SECRET,
     
 }
 

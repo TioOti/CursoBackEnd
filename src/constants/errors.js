@@ -17,5 +17,6 @@ export const ERRORS = {
     GITHUB_USER: { message: "Email registered with Github, please sign in accordingly.", code: "ERR_015", status: 400 },
     EMAIL_ALREADY_USED: { message: "This email address is already in use.", code: "ERR_016", status: 400 },
     PASSWORD_ALREADY_USED: { message: "You cannot use your current password.", code: "ERR_017", status: 400 },
-    GITHUB_ERROR_MESSAGE: { message: "Cannot log you in through GitHub at this moment.", code: "ERR_018", status: 500 }
+    GITHUB_ERROR_MESSAGE: { message: "Cannot log you in through GitHub at this moment.", code: "ERR_018", status: 500 },
+    PRODUCT_OWNERSHIP: { message: "You cannot add a product you own to the cart.", code: "ERR_020", status: 400 }
 };

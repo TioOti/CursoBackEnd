@@ -8,6 +8,7 @@ export default class ProductDTO {
         this.category = product.category;
         this.thumbnails = product.thumbnails;
         this.code = product.code;
+        this.owner = product.owner;
         this.stock = product.stock;
         this.deleted = product.deleted;
         this.createdAt = product.createdAt;
