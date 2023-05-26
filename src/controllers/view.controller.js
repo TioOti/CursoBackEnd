@@ -7,7 +7,7 @@ import logger from '../utils/logger.js';
 import { ERRORS } from '../constants/errors.js';
 import CustomError from '../utils/customError.js';
 import EmailSender from '../utils/emailSender.js';
-import UsersDTO from '../services/userDAOs/userDTO.js';
+import UserDTO from '../services/userDAOs/userDTO.js';
 
 export async function renderHome(req, res){
     try {
