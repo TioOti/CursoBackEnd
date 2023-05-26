@@ -2,6 +2,7 @@ export const ERRORS = {
     UNHANDLED_ERROR: { message: "Unhandled Error.", code: "ERR_000", status: 500 },
     LOGIN_INVALID_PASS: { message: "Invalid Password.", code: "ERR_001", status: 401 },
     USER_NOT_FOUND: { message: "User was not found.", code: "ERR_002", status: 404 },
+    USERS_NOT_FOUND: { message: "Users were not found.", code: "ERR_003", status: 404 },
     CARTS_NOT_FOUND: { message: "Carts were not found.", code: "ERR_003", status: 404 },
     CART_NOT_FOUND: { message: "Cart was not found.", code: "ERR_004", status: 404 },
     INVALID_INPUT_PRODUCT: { message: "There are invalid fields for this product.", code: "ERR_005", status: 400 },
@@ -18,5 +19,6 @@ export const ERRORS = {
     EMAIL_ALREADY_USED: { message: "This email address is already in use.", code: "ERR_016", status: 400 },
     PASSWORD_ALREADY_USED: { message: "You cannot use your current password.", code: "ERR_017", status: 400 },
     GITHUB_ERROR_MESSAGE: { message: "Cannot log you in through GitHub at this moment.", code: "ERR_018", status: 500 },
-    PRODUCT_OWNERSHIP: { message: "You cannot add a product you own to the cart.", code: "ERR_020", status: 400 }
+    PRODUCT_OWNERSHIP: { message: "You cannot add a product you own to the cart.", code: "ERR_020", status: 400 },
+    GITHUB_ERROR_MESSAGE: { message: "Cannot log you in through GitHub at this moment.", code: "ERR_021", status: 500 }
 };

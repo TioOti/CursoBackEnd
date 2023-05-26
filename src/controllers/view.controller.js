@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import { generateToken } from './../utils/jwt.util.js';
 import * as Constants from "../constants/constants.js";
 import logger from '../utils/logger.js';
+import config from '../config/config.js';
 import { ERRORS } from '../constants/errors.js';
 import CustomError from '../utils/customError.js';
 import EmailSender from '../utils/emailSender.js';
@@ -16,6 +17,61 @@ export async function renderHome(req, res){
         const user = req.user;
         const isAdmin = user.role === Constants.ADMIN;
         res.render(Constants.HOME, { ...products, user, isAdmin });
+    } catch (error) {
+        logError(error, req);
+        res.render(Constants.HOME, { error: error.message });
+    }
+}
+
+export async function userManagement(req, res){
+    try {
+        const user = req.user;
+        const users = factory.user.getUsers();
+        res.render(Constants.USERS, { ...users, user });
+    } catch (error) {
+        logError(error, req);
+        res.render(Constants.HOME, { error: error.message });
+    }
+}
+
+export async function findUser(req, res){
+    try {
+        const email = req.query.email;
+        const user = req.user;
+        const searchUser = await factory.user.getUser(email);
+        const isPremium = searchUser?.role === Constants.PREMIUM;
+        if(!searchUser) { 
+            res.render(Constants.USERS, { userNotFound: ERRORS.USER_NOT_FOUND.message, user });
+        } else res.render(Constants.USERS, { searchUser, isPremium, user });
+    } catch (error) {
+        logError(error, req);
+        res.render(Constants.HOME, { error: error.message });
+    }
+}
+
+export async function changeRole(req, res){
+    try {
+        const userId = req.query.userId;
+        const user = req.user;
+        let userToChange = await factory.user.getUserById(userId);
+        if(!userToChange) throw CustomError.createError(ERRORS.USER_NOT_FOUND, null, email); 
+        if(userToChange.role === Constants.PREMIUM) {
+            userToChange = await factory.user.updateUser(userToChange.email, { role: Constants.USER });
+        } else userToChange = await factory.user.updateUser(userToChange.email, { role: Constants.PREMIUM });
+        const isPremium = userToChange.role === Constants.PREMIUM;
+        res.render(Constants.USERS, { searchUser: userToChange, isPremium, user });
+    } catch (error) {
+        logError(error, req);
+        res.render(Constants.HOME, { error: error.message });
+    }
+}
+
+export async function deleteUser(req, res){
+    try {
+        const email = req.query.email;
+        const user = req.user;
+        await factory.user.deleteUser(email);
+        res.render(Constants.USERS, { deleted: Constants.USER_DELETED_SUCCESS, user });
     } catch (error) {
         logError(error, req);
         res.render(Constants.HOME, { error: error.message });
@@ -48,6 +104,18 @@ export async function addProductToCart(req, res){
     }
 }
 
+export async function deleteProductFromCart(req, res){
+    try {
+        const { cid, pid } = req.params;
+        const cart = await factory.cart.deleteProduct(cid, pid);
+        if (!cart) throw CustomError.createError(ERRORS.CART_NOT_FOUND, null, req.user?.email);
+        await getCart(req, res);
+    } catch (error) {
+        logError(error, req);
+        res.render(Constants.CART, { error: error.message });
+    }
+}
+
 export async function purchase(req, res){
     try {
         const { cid } = req.params;
@@ -55,19 +123,26 @@ export async function purchase(req, res){
         if (!cart) throw CustomError.createError(ERRORS.CART_NOT_FOUND, null, req.user?.email);
         let amount = 0;
         let unprocessedProducts = [];
+        let isItemProccesed = false;
         cart.products.forEach( async cartItem => {
             if(cartItem.quantity <= cartItem.product.stock){
                 await factory.product.updateProduct(cartItem.product.id, {"stock": cartItem.product.stock - cartItem.quantity});
                 amount += cartItem.product.price;
+                isItemProccesed = true;
             } else {
                 unprocessedProducts.push({ product: cartItem.product.id, quantity: cartItem.quantity });
             }
         });
-        if(unprocessedProducts.length == 0){
+        
+        if(unprocessedProducts.length === 0){
             await factory.cart.deleteProducts(cid);
         } else await factory.cart.updateCart(cid, { products: unprocessedProducts });
-        const ticket = await factory.ticket.createTicket({ "amount": amount, "purchaser": req.user.email});
-        res.render(Constants.CART, { success: Constants.PURCHASE_SUCCESS, ticket, unprocessedProducts });
+
+        if(isItemProccesed) {
+            const ticket = await factory.ticket.createTicket({ "amount": amount, "purchaser": req.user.email});
+            res.render(Constants.CART, { success: Constants.PURCHASE_SUCCESS, purchase: true, ticket, unprocessedProducts });
+        } else res.render(Constants.CART, { warning: Constants.NO_PRODUCTS_PROCESSED, purchase: true, unprocessedProducts });
+        
     } catch (error) {
         logError(error, req);
         res.render(Constants.CART, { error: error.message });
@@ -130,8 +205,7 @@ export async function passwordRecovery(req, res){
             }
             fromEmail= true;
             res.render(Constants.PASSWORD_RECOVERY, { fromEmail, user: isValid.user });
-        }
-        res.render(Constants.PASSWORD_RECOVERY, { fromEmail });
+        } else res.render(Constants.PASSWORD_RECOVERY, { fromEmail });
     } catch (error) {
         logWarning(error, req);
         res.render(Constants.PASSWORD_RECOVERY, { error: error.message });
@@ -158,9 +232,9 @@ export async function updatePassword(req, res){
     try {
         await factory.user.updateUser(email, { password: newPassword }, true);
         res.render(Constants.LOGIN, { success: Constants.PASSWORD_UPDATE_SUCCESS });
-      } catch (error) {
+    } catch (error) {
         res.render(Constants.PASSWORD_RECOVERY, { fromEmail: true, user: { email }, error: error.message });
-      }
+    }
 }
 
 export async function createUser(req, res) {

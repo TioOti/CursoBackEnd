@@ -1,7 +1,6 @@
 import dotenv from 'dotenv'
 dotenv.config();
 import {Command} from "commander";
-
 const program = new Command();
 
 program.option("-p, --persistence <type>", "Selected Persistence/DAO").parse();
@@ -13,9 +12,10 @@ export default {
     node_env: process.env.NODE_ENV || 'dev',
     secret: process.env.SECRET,
     githubClientId: process.env.CLIENT_ID,
+    mailer_user: process.env.MAILER_USER,
+    mailer_secret: process.env.MAILER_SECRET,
+    stripeSecret: process.env.STRIPE_SECRET,
     githubClientSecret: process.env.CLIENT_SECRET,
     githubCallbackUrl: process.env.CALLBACK_URL,
-    stripeSecret: process.env.STRIPE_SECRET,
-    
 }
 

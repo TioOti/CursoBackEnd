@@ -1,6 +1,7 @@
 import factory from '../services/factory.js';
 import * as Constants from '../constants/constants.js';
 import { ERRORS } from '../constants/errors.js';
+import EmailSender from '../utils/emailSender.js';
 import CustomError from '../utils/customError.js';
 
 export async function getProducts(req,res, next){
@@ -23,6 +24,7 @@ export async function getProducts(req,res, next){
                 status: req.query.status
             }
         };
+        
         const products = await factory.product.getProducts(query, options);
         if (!products || products.productList.length == 0){
             throw CustomError.createError(ERRORS.PRODUCTS_NOT_FOUND, null, req.user?.email);
@@ -91,12 +93,14 @@ export async function deleteProduct(req, res, next){
     try {
         const { pid } = req.params;
         const product = await factory.product.getProduct(pid);
-        if (!product || product.deleted){
-            throw CustomError.createError(ERRORS.PRODUCT_NOT_FOUND_OR_DELETED, null, req.user?.email);
-        } else {
-            await factory.product.deleteProduct(pid)
-            res.status(204).send();
-        }
+        if (!product || product.deleted) throw CustomError.createError(ERRORS.PRODUCT_NOT_FOUND_OR_DELETED, null, req.user?.email);
+        if (req.user.role === PREMIUM && product.owner !== req.user?.id) throw CustomError.createError(ERRORS.UNAUTHORIZED_DELETE, null, req.user?.email);
+        await factory.product.deleteProduct(pid);
+
+        let user = req.user;
+        if (req.user.role === ADMIN) user = await factory.user.getUserById(product.owner);
+        EmailSender.sendProductDeletionEmail(user);
+        res.status(204).send();
     } catch (error) {
         handleErrors(error, req, next);
     }

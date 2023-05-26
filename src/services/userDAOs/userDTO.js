@@ -1,5 +1,4 @@
 import moment from 'moment';
-
 export default class UserDTO {
     constructor(user){
         this.id = user._id || user.id;

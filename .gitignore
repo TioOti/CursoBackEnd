@@ -2,3 +2,4 @@
 .eslintrc.json
 .env
 /src/logs
+.vscode

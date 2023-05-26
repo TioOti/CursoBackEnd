@@ -27,7 +27,6 @@ export function apiAuth(req, res, next){
   }
 }
 
-
 export function auth(req, res, next) {
   const token = req.session.authToken || "";
   try {

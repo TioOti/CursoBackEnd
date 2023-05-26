@@ -10,11 +10,17 @@ passport.serializeUser(function (user, done) {
   done(null, user._id);
 });
 
-passport.deserializeUser(async function (_id, done) {
+passport.deserializeUser( async (_id, done) => {
   console.log("Deserializing");
-  await UserModel.findById(_id, function (err, user) {
-      done(err, user);
-  });
+  try {
+    const user = await UserModel.findById(_id);
+    if (!user) {
+      return done(null, false);
+    }
+    return done(null, user);
+  } catch (error){
+    return done(error);
+  }
 });
 
 passport.use("current", new Strategy({
@@ -26,7 +32,7 @@ passport.use("current", new Strategy({
 
 passport.use('github', new passportGithub.Strategy({
     clientID: config.githubClientId,
-    clientSecret: config.githubCallbackUrl,
+    clientSecret: config.githubClientSecret,
     callbackURL: config.githubCallbackUrl
   }, githubLoginRegister));
 

@@ -6,14 +6,11 @@ import * as Constants from '../constants/constants.js'
 export async function getCarts(req, res, next){
     try {
         const carts = await factory.cart.getCarts();
-        if(!carts || carts.length == 0){
-            throw CustomError.createError(ERRORS.CARTS_NOT_FOUND, null, req.user?.email);
-        } else{
-            res.json({
-                carts: carts.cartList,
-                status: Constants.STATUS.SUCCESS
-            })
-        };
+        if (!carts || carts.length === 0) throw CustomError.createError(ERRORS.CARTS_NOT_FOUND, null, req.user?.email);
+        res.json({
+            carts: carts.cartList,
+            status: Constants.STATUS.SUCCESS
+        });
     } catch (error) {
         handleErrors(error, req, next);
     }
