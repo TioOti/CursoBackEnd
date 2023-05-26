@@ -84,7 +84,7 @@ export async function login(req, res) {
                     const newCart = await factory.cart.createCart({});
                     user = await factory.user.updateUser(user.email, { cart: newCart.id });
                 }
-                const token = generateToken(new UserDTOrDTO(user));
+                const token = generateToken(new UserDTO(user));
                 req.session.authToken = token;
                 res.redirect(Constants.PRODUCTS);
             } else {

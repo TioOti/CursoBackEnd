@@ -6,6 +6,7 @@ import handlebars from 'express-handlebars';
 import viewsRouter from './routers/views.router.js';
 import ProductsRouter from './routers/products.router.js'
 import CartsRouter from './routers/carts.router.js';
+import session from 'express-session';
 import PaymentsRouter from './routers/payments.router.js';
 import UserRouter from "./routers/user.router.js"
 import AuthRouter from "./routers/auth.router.js";
@@ -50,10 +51,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.on("error", (error) => console.error(error))
 server.on('error', (err) => console.log(err));
+app.use(session({
+    secret: config.secret,
+    resave: false,
+    saveUninitialized: true
+}));
 app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/api/products", ProductsRouter);
 app.use("/api/carts", CartsRouter);
+app.use("/api/payments", PaymentsRouter);
 app.use("/views", viewsRouter);
 app.use("/api/mock", MocksRouter);
 app.use("/api/users", UserRouter);
