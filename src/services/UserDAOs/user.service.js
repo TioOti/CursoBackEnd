@@ -20,14 +20,17 @@ export async function createUser(data) {
     return user;
   }
 }
+
 export async function getUser(email) {
-    const user = await UserModel.find({ email }).lean();
+    const user = await UserModel.find({ email, deletedAt: { $exists: false } }).lean();
     return user[0];
 }
+
 export async function getUserById(id) {
   const user = await UserModel.find({ _id: id }).lean();
   return user[0];
 }
+
 export async function updateUser(email, data, updatePassword = false){
   if(updatePassword){
     if(await validPassword(email, data.password)) data.password = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10));
@@ -36,12 +39,15 @@ export async function updateUser(email, data, updatePassword = false){
   }
   return await UserModel.findOneAndUpdate({ email }, data, { new: true });
 }
+
 export async function updateLastConnection(email){
   await UserModel.findOneAndUpdate({ email }, { last_connection: Date.now() });
 }
+
 export async function deleteUser(email){
   await UserModel.delete({ email });
 }
+
 export async function deleteUsers(){
   let date = moment().subtract(2, 'days').toDate();
   const conditions = { last_connection: { $lte: date }, role: { $in: [ USER, PREMIUM ] } };
@@ -50,6 +56,7 @@ export async function deleteUsers(){
   users.forEach(user => sendEmail(user._doc));
   return users;
 }
+
 async function validPassword(email, newPassword){
   const user = await getUser(email);
   if(user){
