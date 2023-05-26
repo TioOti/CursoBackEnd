@@ -15,19 +15,19 @@ export async function createCart(data){
         return cart;
     } 
 
-export async function addProductToCart(cartId, productId){
-    const cart = await CartModel.findById(cartId);
+    export async function addProductToCart(cartId, productId){
+        const cart = await CartModel.findById(cartId);
         if (cart) {
             const productToUpdate = cart.products.find(product => product.product == productId);
             if (productToUpdate){
                 productToUpdate.quantity = productToUpdate.quantity + 1;
-            } else{
-                cart._doc.products.push({product: productId});
+            } else {
+                cart._doc.products.push({ product: productId, quantity: 1 });
             }
             await CartModel.findByIdAndUpdate(cartId, cart, { new: true });
         }
         return cart;
-}
+    }
 
 export async function updateProductQty(cartId, productId, quantity){
         const cart = await CartModel.findById(cartId);
@@ -53,12 +53,12 @@ export async function updateCart(cartId, data){
 }
 
 export async function deleteProduct(cartId, productId){
-        const cart = await CartModel.findById(cartId);
-        if (cart) {
-            cart._doc.products = cart.products.filter(cartItem => cartItem.product != productId.toString());
-            await CartModel.findByIdAndUpdate(cartId, cart, { new: true });
-        }
-        return cart;
+    const cart = await CartModel.findById(cartId);
+    if (cart) {
+        cart._doc.products = await cart._doc.products.filter(cartItem => cartItem.product.toString() !== productId.toString());
+        await CartModel.findByIdAndUpdate(cartId, cart, { new: true });
+    }
+    return cart;
 }
 
 export async function deleteProducts(cartId){

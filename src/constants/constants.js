@@ -12,6 +12,7 @@ export const REGISTRATION = "registration";
 export const PRODUCTS_VIEW = "/views/products";
 export const PASSWORD_RECOVERY = "passwordRecovery";
 export const PRODUCTS = "products";
+export const PURCHASE_SUCCESS = "Your order was successfully created.";
 export const PRODUCTS_UNAUTHENTICATED = "/api/products/unauthenticated";
 export const CARTS_UNAUTHENTICATED = "/api/carts/unauthenticated";
 export const CART = "cart";

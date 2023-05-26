@@ -1,16 +1,18 @@
 import { UserModel } from '../../models/user.model.js';
+import { USER, PREMIUM } from '../../constants/constants.js';
 import { ERRORS } from '../../constants/errors.js';
 import bcrypt from 'bcrypt';
+import moment from 'moment';
 import CustomError from '../../utils/customError.js';
-import EmailSender from '../../utils/emailSender.js'
+import EmailSender from '../../utils/emailSender.js';
 
-export async function getUser(){
-  return await UserModel.find({deletedAt: { $exists: true}});
+export async function getUsers() {
+  return await UserModel.find({ deletedAt: { $exists: false } });
 }
 
 export async function createUser(data) {
-  const userRegistered = await getUser(data.email);
-  if (userRegistered) {
+  const userAlreadyRegistered = await getUser(data.email);
+  if (userAlreadyRegistered) {
     throw CustomError.createError(ERRORS.EMAIL_ALREADY_USED, null, data.email);
   } else {
     data.password = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10));
@@ -18,21 +20,36 @@ export async function createUser(data) {
     return user;
   }
 }
-
-export async function updateLastConnection(email){
-  await UserModel.findOneAndUpdate({email}, {lastConnection: Date.now()});
+export async function getUser(email) {
+    const user = await UserModel.find({ email }).lean();
+    return user[0];
 }
-
+export async function getUserById(id) {
+  const user = await UserModel.find({ _id: id }).lean();
+  return user[0];
+}
 export async function updateUser(email, data, updatePassword = false){
   if(updatePassword){
     if(await validPassword(email, data.password)) data.password = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10));
   } else {
     delete data.password;
   }
-  const user = await UserModel.findOneAndUpdate({ email }, data, { new: true });
-  return user;
+  return await UserModel.findOneAndUpdate({ email }, data, { new: true });
 }
-
+export async function updateLastConnection(email){
+  await UserModel.findOneAndUpdate({ email }, { last_connection: Date.now() });
+}
+export async function deleteUser(email){
+  await UserModel.delete({ email });
+}
+export async function deleteUsers(){
+  let date = moment().subtract(2, 'days').toDate();
+  const conditions = { last_connection: { $lte: date }, role: { $in: [ USER, PREMIUM ] } };
+  const users = await UserModel.find({ ...conditions, deletedAt: { $exists: false } });
+  await UserModel.delete({ ...conditions });
+  users.forEach(user => sendEmail(user._doc));
+  return users;
+}
 async function validPassword(email, newPassword){
   const user = await getUser(email);
   if(user){
@@ -41,11 +58,6 @@ async function validPassword(email, newPassword){
   return true;
 }
 
-export async function deleteUsers(){
-  const date = new Date();
-  date.setDate(date.getDate() - 2);
-  const users = await UserModel.find({ last_connection: { $lte: date }, deletedAt: { $exists: false } });
-  await UserModel.delete({ last_connection: { $lte: date } });
-  users.forEach(user => sendEmail(user._doc));
-  return users;
+function sendEmail(user){
+  EmailSender.sendUserDeletionEmail(user);
 }

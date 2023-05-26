@@ -1,39 +1,61 @@
 <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid d-flex justify-content-between">
-        <a class="navbar-brand" href="products">eCommerce</a>
-        <div class="btn-group">
-            <button class="btn border-0 me-5" type="button" id="defaultDropdown" data-bs-toggle="dropdown" 
-                    data-bs-auto-close="true" aria-expanded="false">
-                <img src="../img/usuario.png" alt="User" width="48"> {{user.first_name}} {{user.last_name}} </button>
-            <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="defaultDropdown">
-                <li><a class="btn btn-sm btn-outline-dark border-0 w-100" href="logout" role="button">Logout</a></li>
-            </ul>
+        <a class="navbar-brand" href="/views/products">eCommerce</a>
+        <div class="d-flex align-items-center">
+            <div><a class="text-center" href="/views/carts/{{user.cart}}" role="button">
+                <img src="/cart.png" alt="Cart" width="48"></a></div>
+            <div class="btn-group ms-3">
+                <button class="btn border-0 me-5" type="button" id="defaultDropdown" data-bs-toggle="dropdown" 
+                        data-bs-auto-close="true" aria-expanded="false">
+                    <img src="/User.png" alt="User" width="48"></button>
+                <ul class="dropdown-menu dropdown-menu-end p-0" aria-labelledby="defaultDropdown">
+                    <li><a class="btn btn-sm btn-outline-dark border-0 w-100" href="logout" role="button">Logout</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 </nav>
+{{#if error}}
+    <div class="d-flex justify-content-center">
+        <div id="alert_error" class="alert alert-danger">
+            <strong>{{error}}</strong>
+        </div>
+    </div>
+{{/if}}
 <div class="container">
     {{#if user}}
       <div class="ms-5">
         <h3 class="text-primary text-opacity-75 mt-4">Welcome {{user.first_name}} {{user.last_name}}!</h3>
+        <h5 class="text-primary text-opacity-75 ms-2 mt-1">Email: {{user.email}} - Age: {{user.age}}</h5>
+        {{#if isAdmin}}
+            <h5 class="text-danger text-opacity-75 ms-2 mt-1">Admin Role</h5>
+        {{else}}
+            <h5 class="text-danger text-opacity-75 ms-2 mt-1">User Role</h5>
+        {{/if}}
       </div>
     {{/if}}
-    <h1 class="d-flex justify-content-center mt-3">Lista de Productos:</h1>
+    <h1 class="d-flex justify-content-center text-dark text-opacity-75 mt-3">Products List:</h1>
     <div id="productsContainer" class="d-flex flex-wrap justify-content-evenly mt-5">
-    {{#each docs}}
-    <div class="card ms-2 my-2 ">
-        <h5 class="card-header d-flex justify-content-center">{{title}}</h5>
-        <div class="card-body">
-            <p>Id: {{id}}</p>
-            <p>Descripcion: {{description}}</p>
-            <p>Precio: ${{price}}</p>
-            <p>Código: {{code}}</p>
-            <p>Stock: {{stock}}</p>
+        {{#if productList.length}}
+        {{#each productList}}
+        <div class="card ms-2 my-2 ">
+            <h5 class="card-header d-flex justify-content-center">{{title}}</h5>
+            <div class="card-body">
+Expand All
+	@@ -44,7 +48,9 @@
+                <p>Stock: {{stock}}</p>
+            </div>
+            <div>
+                <form action="/views/carts/{{../user.cart}}/products/{{id}}" method="post">
+                    <button type="submit" class="btn btn-sm btn-light border-top w-100">Add to Cart</button>
+                </form>
+            </div>
+            <input type="hidden" value="productId_{{id}}" />
         </div>
-        <div>
-            <button class="btn btn-sm btn-light border border-2 w-100">Add to Cart</button>
-        </div>
-    </div>
-    {{/each}}
+        {{/each}}
+        {{else}}
+            <h2 class="d-flex justify-content-center mt-3">There are no products to display.</h2>
+        {{/if}}
     </div>
     <div class="d-flex justify-content-end my-5">
         {{#if hasPrevPage}}

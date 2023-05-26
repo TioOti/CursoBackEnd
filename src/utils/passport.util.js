@@ -6,15 +6,15 @@ import {githubLoginRegister} from '../middleware/github.middleware.js'
 import config from "../config/config.js";
 
 passport.serializeUser(function (user, done) {
-    console.log("Serializing");
-    done(null, user._id);
+  console.log("Serializing");
+  done(null, user._id);
 });
-  
-passport.deserializeUser(function (_id, done) {
-    console.log("Deserializing");
-    UserModel.findById(_id, function (err, user) {
-        done(err, user);
-    });
+
+passport.deserializeUser(async function (_id, done) {
+  console.log("Deserializing");
+  await UserModel.findById(_id, function (err, user) {
+      done(err, user);
+  });
 });
 
 passport.use("current", new Strategy({
